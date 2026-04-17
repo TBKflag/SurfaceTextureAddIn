@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "3oC1cPUJRAU=",
+  "success": true,
+  "projectFilePath": "D:\\坚果云\\我的坚果云\\插件\\src\\SurfaceTextureAddIn\\SurfaceTextureAddIn.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Administrator\\.nuget\\packages\\solidworks.interop.sldworks\\32.1.0\\solidworks.interop.sldworks.32.1.0.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\solidworks.interop.swconst\\32.1.0\\solidworks.interop.swconst.32.1.0.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\solidworks.interop.swpublished\\32.1.0\\solidworks.interop.swpublished.32.1.0.nupkg.sha512"
+  ],
+  "logs": []
+}

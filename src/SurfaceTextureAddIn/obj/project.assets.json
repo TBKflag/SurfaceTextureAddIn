@@ -1,0 +1,146 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.8": {
+      "SolidWorks.Interop.sldworks/32.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/SolidWorks.Interop.sldworks.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/SolidWorks.Interop.sldworks.dll": {}
+        }
+      },
+      "SolidWorks.Interop.swconst/32.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/SolidWorks.Interop.swconst.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/SolidWorks.Interop.swconst.dll": {}
+        }
+      },
+      "SolidWorks.Interop.swpublished/32.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/SolidWorks.Interop.swpublished.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/SolidWorks.Interop.swpublished.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SolidWorks.Interop.sldworks/32.1.0": {
+      "sha512": "lq3QmJwBbVE3K+pN5JFSGn1Bj7J1vUyTr4TtT23UAOtd8MXLElZROm9Iee2N8SP8AXsLTpXdBXGs7xYeJT53qw==",
+      "type": "package",
+      "path": "solidworks.interop.sldworks/32.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/SolidWorks.Interop.sldworks.dll",
+        "solidworks.interop.sldworks.32.1.0.nupkg.sha512",
+        "solidworks.interop.sldworks.nuspec"
+      ]
+    },
+    "SolidWorks.Interop.swconst/32.1.0": {
+      "sha512": "mOLeWDKf0hX7iSNmdc22FmwoCaqH3KuNhODNGdWuT36KB/maGzQdfU+r9YS97n3mMIdWN3qaLBQ4eJG8z77rMw==",
+      "type": "package",
+      "path": "solidworks.interop.swconst/32.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/SolidWorks.Interop.swconst.dll",
+        "solidworks.interop.swconst.32.1.0.nupkg.sha512",
+        "solidworks.interop.swconst.nuspec"
+      ]
+    },
+    "SolidWorks.Interop.swpublished/32.1.0": {
+      "sha512": "lZ9tC2F0u1xs/afKuKBOEXP+oNvHgrCVUBRCiN6OTVhN3tEA8eCfJ19b0sZev2wFh+Zpd2kU0F5Oo06Q8Uxv/w==",
+      "type": "package",
+      "path": "solidworks.interop.swpublished/32.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/SolidWorks.Interop.swpublished.dll",
+        "solidworks.interop.swpublished.32.1.0.nupkg.sha512",
+        "solidworks.interop.swpublished.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.8": [
+      "SolidWorks.Interop.sldworks >= 32.1.0",
+      "SolidWorks.Interop.swconst >= 32.1.0",
+      "SolidWorks.Interop.swpublished >= 32.1.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Administrator\\.nuget\\packages\\": {},
+    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\坚果云\\我的坚果云\\插件\\src\\SurfaceTextureAddIn\\SurfaceTextureAddIn.csproj",
+      "projectName": "SurfaceTextureAddIn",
+      "projectPath": "D:\\坚果云\\我的坚果云\\插件\\src\\SurfaceTextureAddIn\\SurfaceTextureAddIn.csproj",
+      "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
+      "outputPath": "D:\\坚果云\\我的坚果云\\插件\\src\\SurfaceTextureAddIn\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net48"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net48": {
+          "targetAlias": "net48",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "9.0.300"
+    },
+    "frameworks": {
+      "net48": {
+        "targetAlias": "net48",
+        "dependencies": {
+          "SolidWorks.Interop.sldworks": {
+            "target": "Package",
+            "version": "[32.1.0, )"
+          },
+          "SolidWorks.Interop.swconst": {
+            "target": "Package",
+            "version": "[32.1.0, )"
+          },
+          "SolidWorks.Interop.swpublished": {
+            "target": "Package",
+            "version": "[32.1.0, )"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

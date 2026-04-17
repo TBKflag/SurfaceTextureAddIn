@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SurfaceTextureAddIn": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}
