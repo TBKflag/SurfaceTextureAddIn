@@ -1,6 +1,9 @@
-using System;
-using System.Windows.Forms;
+using SolidWorks.Interop.swconst;
+using SolidWorks.Interop.swpublished;
 using SurfaceTextureAddIn.Models;
+using System;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace SurfaceTextureAddIn.UI;
 
@@ -21,6 +24,11 @@ internal sealed class TextureCommandForm : Form
     private object? selectedSeedBody;
     private object? selectedTargetFace;
     private bool submitted;
+
+    // 定义 SolidWorks 类型常量（替换魔法数字）
+    private const int SwSelSolidBodies = (int)swSelectType_e.swSelSOLIDBODIES;
+    private const int SwSelFaces = (int)swSelectType_e.swSelFACES;
+    private const int SwDocPart = (int)swDocumentTypes_e.swDocPART;
 
     public TextureCommandForm(dynamic swApp, TextureOperationMode mode)
     {
@@ -144,7 +152,7 @@ internal sealed class TextureCommandForm : Form
 
     private void CaptureSeedBody()
     {
-        var selected = TryGetSelectedObject(72);
+        var selected = TryGetSelectedObject(SwSelSolidBodies);
         if (selected is null)
         {
             MessageBox.Show("No solid body selected in SolidWorks.", "Surface Texture Add-In", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -157,7 +165,7 @@ internal sealed class TextureCommandForm : Form
 
     private void CaptureTargetFace()
     {
-        var selected = TryGetSelectedObject(2);
+        var selected = TryGetSelectedObject(SwSelFaces);
         if (selected is null)
         {
             MessageBox.Show("No face selected in SolidWorks.", "Surface Texture Add-In", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -172,35 +180,66 @@ internal sealed class TextureCommandForm : Form
     {
         try
         {
-            object? activeDocObject = swApp?.ActiveDoc;
-            if (activeDocObject is null)
-            {
-                return null;
-            }
+            // 1. 获取ActiveDoc（SolidWorks COM属性：ActiveDoc，无参数）
+            object? activeDoc = InvokeComMethod(swApp, "ActiveDoc");
+            if (activeDoc == null) return null;
 
-            dynamic activeDoc = activeDocObject;
-            object? selectionManagerObject = activeDoc.SelectionManager;
-            if (selectionManagerObject is null)
-            {
-                return null;
-            }
+            // 2. 获取SelectionManager（ActiveDoc的属性：SelectionManager，无参数）
+            object? selectionMgr = InvokeComMethod(activeDoc, "SelectionManager");
+            if (selectionMgr == null) return null;
 
-            dynamic selectionManager = selectionManagerObject;
-            int count = selectionManager.GetSelectedObjectCount2(-1);
-            for (var index = 1; index <= count; index++)
+            // 3. 获取选中对象数量（方法：GetSelectedObjectCount2，参数：-1）
+            int count = (int)InvokeComMethod(selectionMgr, "GetSelectedObjectCount2", new object[] { -1 })!;
+
+            // 4. 遍历选中对象，匹配类型
+            for (int index = 1; index <= count; index++)
             {
-                int type = selectionManager.GetSelectedObjectType3(index, -1);
+                // 4.1 获取选中对象类型（方法：GetSelectedObjectType3，参数：index, -1）
+                int type = (int)InvokeComMethod(selectionMgr, "GetSelectedObjectType3", new object[] { index, -1 })!;
                 if (type == expectedType)
                 {
-                    return selectionManager.GetSelectedObject6(index, -1);
+                    // 4.2 获取选中对象（方法：GetSelectedObject6，参数：index, -1）
+                    return InvokeComMethod(selectionMgr, "GetSelectedObject6", new object[] { index, -1 });
                 }
             }
         }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"获取选中对象失败：{ex.Message}\n{ex.StackTrace}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return null;
+        }
+        return null;
+    }
+
+    // 修复后的通用COM调用方法（关键：补充BindingFlags，适配属性/方法）
+    private object? InvokeComMethod(object comObject, string memberName, object[]? parameters = null)
+    {
+        if (comObject == null) return null;
+        Type comType = comObject.GetType();
+
+        // 优先尝试「属性获取」，再尝试「方法调用」（SolidWorks COM混合属性/方法）
+        BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+        try
+        {
+            // 先尝试作为属性访问（比如ActiveDoc/SelectionManager是属性）
+            return comType.InvokeMember(
+                memberName,
+                flags | BindingFlags.GetProperty,
+                null,
+                comObject,
+                parameters ?? Array.Empty<object>()
+            );
+        }
         catch
         {
-            // Keep null result for the caller.
+            // 属性访问失败，尝试作为方法调用（比如GetSelectedObjectCount2是方法）
+            return comType.InvokeMember(
+                memberName,
+                flags | BindingFlags.InvokeMethod,
+                null,
+                comObject,
+                parameters ?? Array.Empty<object>()
+            );
         }
-
-        return null;
     }
 }

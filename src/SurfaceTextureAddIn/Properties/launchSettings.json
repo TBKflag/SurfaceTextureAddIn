@@ -1,8 +1,13 @@
 {
   "profiles": {
     "SurfaceTextureAddIn": {
-      "commandName": "Project",
-      "nativeDebugging": false
+      "commandName": "Executable", // 改为启动外部程序（SolidWorks）
+      "executablePath": "D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\SLDWORKS.exe", // SolidWorks主程序路径
+      "workingDirectory": "D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS", // 工作目录与程序同路径
+      "nativeDebugging": true, // 开启本机调试（SolidWorks是COM组件，必须开启）
+      "environmentVariables": { // 可选：添加调试环境变量
+        "SOLIDWORKS_ADDIN_DEBUG": "1"
+      }
     }
   }
 }
