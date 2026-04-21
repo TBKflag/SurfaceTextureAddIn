@@ -10,9 +10,9 @@ internal static class SwApiConstants
     public const int MessageBoxWarning = 1;
     public const int MessageBoxInformation = 2;
 
-    public const int BodyOperationAdd = 0;
-    public const int BodyOperationCut = 1;
-    public const int BodyOperationIntersect = 2;
+    public const int BodyOperationAdd = 15903;
+    public const int BodyOperationCut = 15902;
+    public const int BodyOperationIntersect = 15901;
 
     public const int SelectionTypeFaces = 2;
     public const int SelectionTypeBodies = 72;

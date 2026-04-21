@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SysEnv = System.Environment;
+using SolidWorks.Interop.sldworks;
 using SurfaceTextureAddIn.Models;
 using SurfaceTextureAddIn.Services;
 using SurfaceTextureAddIn.UI;
@@ -9,7 +11,7 @@ namespace SurfaceTextureAddIn.Commands;
 
 internal sealed class TextureCommandController
 {
-    private readonly dynamic swApp;
+    private readonly SldWorks swApp;
     private readonly SelectionService selectionService = new();
     private readonly TextureSeedAnalyzer seedAnalyzer = new();
     private readonly FaceSampler faceSampler = new();
@@ -18,7 +20,7 @@ internal sealed class TextureCommandController
     private readonly TextureExecutionValidator executionValidator = new();
     private readonly TexturePropertyManagerPage propertyManagerPage;
 
-    public TextureCommandController(dynamic swApp)
+    public TextureCommandController(SldWorks swApp)
     {
         this.swApp = swApp ?? throw new ArgumentNullException(nameof(swApp));
         propertyManagerPage = new TexturePropertyManagerPage();
@@ -48,7 +50,7 @@ internal sealed class TextureCommandController
             var warnings = executionValidator.Validate(context, samples, placements);
             if (placements.Count == 0)
             {
-                ShowMessage(string.Join(Environment.NewLine, warnings.DefaultIfEmpty("No valid placements were generated on the selected face.")), isWarning: true);
+                ShowMessage(string.Join(global::System.Environment.NewLine, warnings.DefaultIfEmpty("No valid placements were generated on the selected face.")), isWarning: true);
                 return;
             }
 
@@ -58,12 +60,12 @@ internal sealed class TextureCommandController
             var summary = $"Generated {successCount} texture instances out of {placements.Count} candidate placements.";
             if (warnings.Count > 0)
             {
-                summary += $"{Environment.NewLine}{Environment.NewLine}Warnings:{Environment.NewLine}- {string.Join(Environment.NewLine + "- ", warnings)}";
+                summary += $"{SysEnv.NewLine}{SysEnv.NewLine}Warnings:{SysEnv.NewLine}- {string.Join(SysEnv.NewLine + "- ", warnings)}";
             }
 
             if (logs.Count > 0)
             {
-                summary += $"{Environment.NewLine}{Environment.NewLine}Issues:{Environment.NewLine}- {string.Join(Environment.NewLine + "- ", logs.Take(12))}";
+                summary += $"{SysEnv.NewLine}{SysEnv.NewLine}Issues:{SysEnv.NewLine}- {string.Join(SysEnv.NewLine + "- ", logs.Take(12))}";
             }
 
             ShowMessage(summary, isWarning: logs.Count > 0);

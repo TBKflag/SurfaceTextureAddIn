@@ -1,4 +1,5 @@
 using System;
+using SolidWorks.Interop.sldworks;
 using SurfaceTextureAddIn.Core;
 using SurfaceTextureAddIn.Models;
 
@@ -7,18 +8,18 @@ namespace SurfaceTextureAddIn.Services;
 internal sealed class SelectionService
 {
     public TextureExecutionContext BuildContext(
-        dynamic swApp,
+        SldWorks swApp,
         TextureParameters parameters,
         TextureOperationMode mode,
         object? selectedTargetFace = null,
         object? selectedSeedBody = null)
     {
-        object? activeDocObject = swApp?.ActiveDoc;
-        if (activeDocObject is null)
+        // Use SldWorks (early-bound interop), not dynamic — IDispatch on ActiveDoc often throws TYPE_E_ELEMENTNOTFOUND (0x8002802B).
+        ModelDoc2? activeDoc = swApp.IActiveDoc2 as ModelDoc2;
+        if (activeDoc is null)
         {
             throw new InvalidOperationException("No active SolidWorks document is open.");
         }
-        dynamic activeDoc = activeDocObject;
 
         selectedTargetFace ??= TryGetSelectedObject(activeDoc, SwApiConstants.SelectionTypeFaces);
         selectedSeedBody ??= TryGetSelectedObject(activeDoc, SwApiConstants.SelectionTypeBodies);
@@ -33,12 +34,17 @@ internal sealed class SelectionService
             throw new InvalidOperationException("Please pre-select one texture seed body.");
         }
 
-        dynamic targetFace = selectedTargetFace;
         object? targetBody = null;
-
         try
         {
-            targetBody = targetFace.GetBody();
+            if (selectedTargetFace is Face2 face2)
+            {
+                targetBody = face2.GetBody();
+            }
+            else
+            {
+                targetBody = ((dynamic)selectedTargetFace!).GetBody();
+            }
         }
         catch
         {
@@ -56,14 +62,13 @@ internal sealed class SelectionService
         };
     }
 
-    private static object? TryGetSelectedObject(dynamic activeDoc, int selectionType)
+    private static object? TryGetSelectedObject(ModelDoc2 activeDoc, int selectionType)
     {
-        object? selectionManagerObject = activeDoc?.SelectionManager;
-        if (selectionManagerObject is null)
+        var selectionManager = activeDoc.SelectionManager as SelectionMgr;
+        if (selectionManager is null)
         {
             return null;
         }
-        dynamic selectionManager = selectionManagerObject;
 
         int count;
         try
