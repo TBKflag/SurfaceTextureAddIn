@@ -13,11 +13,12 @@ internal sealed class SelectionService
         object? selectedTargetFace = null,
         object? selectedSeedBody = null)
     {
-        dynamic activeDoc = swApp?.ActiveDoc;
-        if (activeDoc is null)
+        object? activeDocObject = swApp?.ActiveDoc;
+        if (activeDocObject is null)
         {
             throw new InvalidOperationException("No active SolidWorks document is open.");
         }
+        dynamic activeDoc = activeDocObject;
 
         selectedTargetFace ??= TryGetSelectedObject(activeDoc, SwApiConstants.SelectionTypeFaces);
         selectedSeedBody ??= TryGetSelectedObject(activeDoc, SwApiConstants.SelectionTypeBodies);
@@ -33,7 +34,7 @@ internal sealed class SelectionService
         }
 
         dynamic targetFace = selectedTargetFace;
-        dynamic targetBody = null;
+        object? targetBody = null;
 
         try
         {
@@ -57,11 +58,12 @@ internal sealed class SelectionService
 
     private static object? TryGetSelectedObject(dynamic activeDoc, int selectionType)
     {
-        dynamic selectionManager = activeDoc?.SelectionManager;
-        if (selectionManager is null)
+        object? selectionManagerObject = activeDoc?.SelectionManager;
+        if (selectionManagerObject is null)
         {
             return null;
         }
+        dynamic selectionManager = selectionManagerObject;
 
         int count;
         try

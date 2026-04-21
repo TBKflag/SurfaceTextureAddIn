@@ -64,9 +64,21 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
             // Fall back to the simple form below.
         }
 
-        using var form = new TextureCommandForm(mode);
-        return form.ShowDialog() == DialogResult.OK
-            ? new TexturePageResult { Parameters = form.GetParameters() }
+        using var form = new TextureCommandForm(swApp, mode);
+        form.Show();
+        while (form.Visible)
+        {
+            Application.DoEvents();
+            Thread.Sleep(15);
+        }
+
+        return form.Submitted
+            ? new TexturePageResult
+            {
+                Parameters = form.GetParameters(),
+                SelectedSeedBody = form.SelectedSeedBody,
+                SelectedTargetFace = form.SelectedTargetFace
+            }
             : null;
     }
 
@@ -97,6 +109,11 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
 
     private void CreateControls()
     {
+        if (page is null)
+        {
+            return;
+        }
+
         dynamic group = page.AddGroupBox(
             GroupId,
             "Texture Parameters",
@@ -285,46 +302,46 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
 
     public bool OnPreviousPage()
     {
-        throw new NotImplementedException();
+        return true;
     }
 
     public bool OnTabClicked(int Id)
     {
-        throw new NotImplementedException();
+        return true;
     }
 
     public void OnNumberboxChanged(int Id, double Value)
     {
-        throw new NotImplementedException();
+        // No-op.
     }
 
     void IPropertyManagerPage2Handler9.OnComboboxSelectionChanged(int Id, int Item)
     {
-        throw new NotImplementedException();
+        // No-op.
     }
 
     void IPropertyManagerPage2Handler9.OnSelectionboxCalloutCreated(int Id)
     {
-        throw new NotImplementedException();
+        // No-op.
     }
 
     void IPropertyManagerPage2Handler9.OnGainedFocus(int Id)
     {
-        throw new NotImplementedException();
+        // No-op.
     }
 
     void IPropertyManagerPage2Handler9.OnLostFocus(int Id)
     {
-        throw new NotImplementedException();
+        // No-op.
     }
 
     public void OnListboxRMBUp(int Id, int PosX, int PosY)
     {
-        throw new NotImplementedException();
+        // No-op.
     }
 
     public void OnNumberBoxTrackingCompleted(int Id, double Value)
     {
-        throw new NotImplementedException();
+        // No-op.
     }
 }

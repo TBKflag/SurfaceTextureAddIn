@@ -49,20 +49,6 @@
       "frameworks": {
         "net48": {
           "targetAlias": "net48",
-          "dependencies": {
-            "SolidWorks.Interop.sldworks": {
-              "target": "Package",
-              "version": "[32.1.0, )"
-            },
-            "SolidWorks.Interop.swconst": {
-              "target": "Package",
-              "version": "[32.1.0, )"
-            },
-            "SolidWorks.Interop.swpublished": {
-              "target": "Package",
-              "version": "[32.1.0, )"
-            }
-          },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300\\RuntimeIdentifierGraph.json"
         }
       }

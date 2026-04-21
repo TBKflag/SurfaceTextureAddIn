@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SolidWorks.Interop.swconst;
 using SolidWorks.Interop.swpublished;
 using SolidWorks.Interop.sldworks;
 using SurfaceTextureAddIn.Commands;
@@ -24,14 +25,34 @@ public sealed class SurfaceTextureAddIn : ISwAddin
 
     public bool ConnectToSW(object ThisSW, int Cookie)
     {
-        swApp = (SldWorks)ThisSW;
-        addInCookie = Cookie;
-        commandController = new TextureCommandController(swApp);
+        try
+        {
+            swApp = (SldWorks)ThisSW;
+            addInCookie = Cookie;
+            commandController = new TextureCommandController(swApp);
 
-        swApp.SetAddinCallbackInfo2(0, this, addInCookie);
-        commandManager = swApp.GetCommandManager(addInCookie);
-        RegisterCommands();
-        return true;
+            swApp.SetAddinCallbackInfo2(0, this, addInCookie);
+            commandManager = swApp.GetCommandManager(addInCookie);
+            RegisterCommands();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            const string title = "Surface Texture Add-In";
+            var message = $"{title} failed to load:{System.Environment.NewLine}{ex.Message}";
+
+            try
+            {
+                swApp?.SendMsgToUser2(message, (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
+            }
+            catch
+            {
+                // If SW UI messaging is unavailable, fallback to a system message box.
+                System.Windows.Forms.MessageBox.Show(message, title, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+            }
+
+            return false;
+        }
     }
 
     public bool DisconnectFromSW()
@@ -92,9 +113,10 @@ public sealed class SurfaceTextureAddIn : ISwAddin
             -1,
             "Distribute texture seed bodies over the selected face and add them to the target body.",
             "Convex Texture",
-            ConvexCommandId,
+            -1,
             nameof(OnGenerateConvexTexture),
             nameof(CanExecuteTextureCommand),
+            ConvexCommandId,
             SwApiConstants.CommandItemMenuAndToolbar);
 
         commandGroup.AddCommandItem2(
@@ -102,9 +124,10 @@ public sealed class SurfaceTextureAddIn : ISwAddin
             -1,
             "Distribute texture seed bodies over the selected face and subtract them from the target body.",
             "Concave Texture",
-            ConcaveCommandId,
+            -1,
             nameof(OnGenerateConcaveTexture),
             nameof(CanExecuteTextureCommand),
+            ConcaveCommandId,
             SwApiConstants.CommandItemMenuAndToolbar);
 
         commandGroup.HasToolbar = true;
