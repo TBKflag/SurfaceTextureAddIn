@@ -1,6 +1,0 @@
-d:\坚果云\我的坚果云\插件\artifacts\verify\SurfaceTextureAddIn.dll
-d:\坚果云\我的坚果云\插件\artifacts\verify\SurfaceTextureAddIn.pdb
-D:\坚果云\我的坚果云\插件\artifacts\build\Debug\net48\SurfaceTextureAddIn.dll
-D:\坚果云\我的坚果云\插件\artifacts\build\Debug\net48\SurfaceTextureAddIn.pdb
-D:\坚果云\我的坚果云\插件\artifacts\build2\Debug\net48\SurfaceTextureAddIn.dll
-D:\坚果云\我的坚果云\插件\artifacts\build2\Debug\net48\SurfaceTextureAddIn.pdb
