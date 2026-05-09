@@ -6,14 +6,18 @@ namespace SurfaceTextureAddIn.Models;
 internal enum TextureOperationMode
 {
     Boss,
-    Cut
+    Cut,
+    CopySingle,
+    EditBoss,
+    EditCut,
+    EditCopySingle
 }
 
 internal sealed class TextureParameters
 {
-    public double SpacingU { get; set; } = 0.01;
-    public double SpacingV { get; set; } = 0.01;
-    public double HeightOrDepth { get; set; } = 0.001;
+    public double SpacingU { get; set; } = 1.0;
+    public double SpacingV { get; set; } = 1.0;
+    public double HeightOrDepth { get; set; } = 1.0;
     public double Margin { get; set; } = 0.0;
     public double RotationDegrees { get; set; } = 0.0;
     public int MaxInstances { get; set; } = 500;

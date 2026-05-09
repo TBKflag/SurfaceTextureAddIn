@@ -80,6 +80,8 @@ internal sealed class SelectionService
             return null;
         }
 
+        System.Diagnostics.Debug.WriteLine($"Selection count: {count}, Looking for type: {selectionType}");
+
         for (var index = 1; index <= count; index++)
         {
             int type;
@@ -92,6 +94,8 @@ internal sealed class SelectionService
                 continue;
             }
 
+            System.Diagnostics.Debug.WriteLine($"Object {index}: type={type}, matches={type == selectionType}");
+
             if (type != selectionType)
             {
                 continue;
@@ -99,10 +103,25 @@ internal sealed class SelectionService
 
             try
             {
-                return selectionManager.GetSelectedObject6(index, -1);
+                var obj = selectionManager.GetSelectedObject6(index, -1);
+                if (obj != null)
+                {
+                    try
+                    {
+                        dynamic dynObj = obj;
+                        string name = dynObj.Name;
+                        System.Diagnostics.Debug.WriteLine($"Found object: {name}, Type: {obj.GetType()}");
+                    }
+                    catch
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Found object, but cannot get name. Type: {obj.GetType()}");
+                    }
+                }
+                return obj;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error getting object {index}: {ex.Message}");
                 return null;
             }
         }

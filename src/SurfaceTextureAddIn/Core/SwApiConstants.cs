@@ -15,7 +15,7 @@ internal static class SwApiConstants
     public const int BodyOperationIntersect = 15901;
 
     public const int SelectionTypeFaces = 2;
-    public const int SelectionTypeBodies = 72;
+    public const int SelectionTypeBodies = 28;
 
     public const int CommandItemMenu = 1;
     public const int CommandItemToolbar = 2;

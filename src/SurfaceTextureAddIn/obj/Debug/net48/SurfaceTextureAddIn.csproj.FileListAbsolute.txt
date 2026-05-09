@@ -1,13 +1,3 @@
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\SurfaceTextureAddIn.csproj.AssemblyReference.cache
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\SurfaceTextureAddIn.GeneratedMSBuildEditorConfig.editorconfig
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\SurfaceTextureAddIn.csproj.CoreCompileInputs.cache
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\bin\Debug\net48\SurfaceTextureAddIn.dll
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\bin\Debug\net48\SurfaceTextureAddIn.pdb
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\SurfaceTextureAddIn.dll
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\refint\SurfaceTextureAddIn.dll
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\SurfaceTextureAddIn.pdb
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\ref\SurfaceTextureAddIn.dll
-D:\坚果云\我的坚果云\插件\src\SurfaceTextureAddIn\obj\Debug\net48\SurfaceTextureAddIn.sourcelink.json
 d:\坚果云\我的坚果云\插件\artifacts\verify\SurfaceTextureAddIn.dll
 d:\坚果云\我的坚果云\插件\artifacts\verify\SurfaceTextureAddIn.pdb
 D:\坚果云\我的坚果云\插件\artifacts\build\Debug\net48\SurfaceTextureAddIn.dll

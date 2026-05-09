@@ -17,6 +17,10 @@ public sealed class SurfaceTextureAddIn : ISwAddin
     private const int MainCommandGroupId = 0x5B17;
     private const int ConvexCommandId = 0;
     private const int ConcaveCommandId = 1;
+    private const int CopySingleCommandId = 2;
+    private const int EditConvexCommandId = 3;
+    private const int EditConcaveCommandId = 4;
+    private const int EditCopySingleCommandId = 5;
 
     private SldWorks? swApp;
     private dynamic? commandManager;
@@ -74,6 +78,26 @@ public sealed class SurfaceTextureAddIn : ISwAddin
         commandController?.Run(TextureOperationMode.Cut);
     }
 
+    public void OnCopySingleTexture()
+    {
+        commandController?.Run(TextureOperationMode.CopySingle);
+    }
+
+    public void OnEditConvexTexture()
+    {
+        commandController?.Run(TextureOperationMode.EditBoss);
+    }
+
+    public void OnEditConcaveTexture()
+    {
+        commandController?.Run(TextureOperationMode.EditCut);
+    }
+
+    public void OnEditCopySingleTexture()
+    {
+        commandController?.Run(TextureOperationMode.EditCopySingle);
+    }
+
     public int CanExecuteTextureCommand()
     {
         return swApp?.ActiveDoc is null ? 0 : 1;
@@ -128,6 +152,50 @@ public sealed class SurfaceTextureAddIn : ISwAddin
             nameof(OnGenerateConcaveTexture),
             nameof(CanExecuteTextureCommand),
             ConcaveCommandId,
+            SwApiConstants.CommandItemMenuAndToolbar);
+
+        commandGroup.AddCommandItem2(
+            "Copy Single Texture",
+            -1,
+            "Copy a single seed body to the selected face position for testing.",
+            "Copy Single",
+            -1,
+            nameof(OnCopySingleTexture),
+            nameof(CanExecuteTextureCommand),
+            CopySingleCommandId,
+            SwApiConstants.CommandItemMenuAndToolbar);
+
+        commandGroup.AddCommandItem2(
+            "Edit Convex Texture",
+            -1,
+            "Edit an existing convex texture by removing and regenerating with new parameters.",
+            "Edit Convex",
+            -1,
+            nameof(OnEditConvexTexture),
+            nameof(CanExecuteTextureCommand),
+            EditConvexCommandId,
+            SwApiConstants.CommandItemMenuAndToolbar);
+
+        commandGroup.AddCommandItem2(
+            "Edit Concave Texture",
+            -1,
+            "Edit an existing concave texture by removing and regenerating with new parameters.",
+            "Edit Concave",
+            -1,
+            nameof(OnEditConcaveTexture),
+            nameof(CanExecuteTextureCommand),
+            EditConcaveCommandId,
+            SwApiConstants.CommandItemMenuAndToolbar);
+
+        commandGroup.AddCommandItem2(
+            "Edit Single Texture",
+            -1,
+            "Edit an existing single texture by removing and regenerating with new parameters.",
+            "Edit Single",
+            -1,
+            nameof(OnEditCopySingleTexture),
+            nameof(CanExecuteTextureCommand),
+            EditCopySingleCommandId,
             SwApiConstants.CommandItemMenuAndToolbar);
 
         commandGroup.HasToolbar = true;

@@ -16,15 +16,49 @@ internal sealed class FaceSampler
             throw new InvalidOperationException("Failed to read target face UV bounds.");
         }
 
-        var minU = uv[0] + parameters.Margin;
-        var maxU = uv[1] - parameters.Margin;
-        var minV = uv[2] + parameters.Margin;
-        var maxV = uv[3] - parameters.Margin;
-        var samples = new List<FaceSample>();
-
-        for (var u = minU; u <= maxU; u += Math.Max(parameters.SpacingU, 1e-5))
+        var minU = uv[0];
+        var maxU = uv[1];
+        var minV = uv[2];
+        var maxV = uv[3];
+        
+        // 应用边距
+        var marginU = parameters.Margin / 1000.0; // 转换为米
+        var marginV = parameters.Margin / 1000.0;
+        
+        var corner0 = TryEvaluate(face, minU, minV);
+        var corner1 = TryEvaluate(face, maxU, minV);
+        var corner2 = TryEvaluate(face, minU, maxV);
+        
+        if (!corner0.IsValid || !corner1.IsValid || !corner2.IsValid)
         {
-            for (var v = minV; v <= maxV; v += Math.Max(parameters.SpacingV, 1e-5))
+            return new List<FaceSample>();
+        }
+        
+        // 计算物理尺寸（米）
+        var uLength = (corner1.Position - corner0.Position).Length;
+        var vLength = (corner2.Position - corner0.Position).Length;
+        
+        // 计算 UV 步长：根据物理间距计算 UV 参数空间步长
+        var uStep = parameters.SpacingU / 1000.0 / uLength * (maxU - minU);
+        var vStep = parameters.SpacingV / 1000.0 / vLength * (maxV - minV);
+        
+        // 确保最小步长
+        uStep = Math.Max(uStep, 1e-5);
+        vStep = Math.Max(vStep, 1e-5);
+        
+        var samples = new List<FaceSample>();
+        
+        // 计算实际采样范围（考虑边距）
+        var marginUParam = marginU / uLength * (maxU - minU);
+        var marginVParam = marginV / vLength * (maxV - minV);
+        var startU = minU + marginUParam;
+        var endU = maxU - marginUParam;
+        var startV = minV + marginVParam;
+        var endV = maxV - marginVParam;
+
+        for (var u = startU; u <= endU; u += uStep)
+        {
+            for (var v = startV; v <= endV; v += vStep)
             {
                 if (samples.Count >= parameters.MaxInstances)
                 {

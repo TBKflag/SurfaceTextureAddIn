@@ -12,10 +12,10 @@ internal sealed class TextureCommandForm : Form
     private readonly dynamic swApp;
     private readonly Label seedSelectionLabel = new() { AutoSize = true, Text = "Not selected" };
     private readonly Label faceSelectionLabel = new() { AutoSize = true, Text = "Not selected" };
-    private readonly NumericUpDown spacingUNumeric = new() { DecimalPlaces = 4, Increment = 0.001M, Minimum = 0.001M, Maximum = 1M, Value = 0.01M };
-    private readonly NumericUpDown spacingVNumeric = new() { DecimalPlaces = 4, Increment = 0.001M, Minimum = 0.001M, Maximum = 1M, Value = 0.01M };
-    private readonly NumericUpDown heightNumeric = new() { DecimalPlaces = 4, Increment = 0.001M, Minimum = 0.0001M, Maximum = 0.2M, Value = 0.001M };
-    private readonly NumericUpDown marginNumeric = new() { DecimalPlaces = 4, Increment = 0.001M, Minimum = 0M, Maximum = 0.2M, Value = 0M };
+    private readonly NumericUpDown spacingUNumeric = new() { DecimalPlaces = 1, Increment = 0.1M, Minimum = 0.1M, Maximum = 100M, Value = 1.0M };
+    private readonly NumericUpDown spacingVNumeric = new() { DecimalPlaces = 1, Increment = 0.1M, Minimum = 0.1M, Maximum = 100M, Value = 1.0M };
+    private readonly NumericUpDown heightNumeric = new() { DecimalPlaces = 2, Increment = 0.1M, Minimum = 0.01M, Maximum = 50M, Value = 1.0M };
+    private readonly NumericUpDown marginNumeric = new() { DecimalPlaces = 1, Increment = 0.1M, Minimum = 0M, Maximum = 20M, Value = 0M };
     private readonly NumericUpDown rotationNumeric = new() { DecimalPlaces = 1, Increment = 1M, Minimum = -360M, Maximum = 360M, Value = 0M };
     private readonly NumericUpDown maxInstancesNumeric = new() { DecimalPlaces = 0, Increment = 10M, Minimum = 1M, Maximum = 5000M, Value = 500M };
     private readonly NumericUpDown maxNormalDeltaNumeric = new() { DecimalPlaces = 1, Increment = 1M, Minimum = 1M, Maximum = 180M, Value = 25M };
@@ -30,16 +30,33 @@ internal sealed class TextureCommandForm : Form
     private const int SwSelFaces = (int)swSelectType_e.swSelFACES;
     private const int SwDocPart = (int)swDocumentTypes_e.swDocPART;
 
-    public TextureCommandForm(dynamic swApp, TextureOperationMode mode)
+    public TextureCommandForm(dynamic swApp, TextureOperationMode mode, TextureParameters? initialParameters = null)
     {
         this.swApp = swApp;
-        Text = mode == TextureOperationMode.Boss ? "Generate Convex Texture" : "Generate Concave Texture";
+        
+        bool isEditMode = mode is TextureOperationMode.EditBoss or TextureOperationMode.EditCut or TextureOperationMode.EditCopySingle;
+        bool isBossMode = mode is TextureOperationMode.Boss or TextureOperationMode.EditBoss;
+        string baseTitle = isBossMode ? "Convex Texture" : "Concave Texture";
+        Text = isEditMode ? $"Edit {baseTitle}" : $"Generate {baseTitle}";
+        
         Width = 560;
         Height = 430;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         MinimizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
+
+        if (initialParameters != null)
+        {
+            spacingUNumeric.Value = (decimal)initialParameters.SpacingU;
+            spacingVNumeric.Value = (decimal)initialParameters.SpacingV;
+            heightNumeric.Value = (decimal)initialParameters.HeightOrDepth;
+            marginNumeric.Value = (decimal)initialParameters.Margin;
+            rotationNumeric.Value = (decimal)initialParameters.RotationDegrees;
+            maxInstancesNumeric.Value = initialParameters.MaxInstances;
+            maxNormalDeltaNumeric.Value = (decimal)initialParameters.MaxNormalDeltaDegrees;
+            curvatureCheckBox.Checked = initialParameters.SkipHighCurvature;
+        }
 
         var layout = new TableLayoutPanel
         {
@@ -54,9 +71,9 @@ internal sealed class TextureCommandForm : Form
         layout.SetColumnSpan(selectionHintLabel, 2);
         AddSelectionField(layout, 1, "Texture Seed Body", seedSelectionLabel, CaptureSeedBody);
         AddSelectionField(layout, 2, "Target Face", faceSelectionLabel, CaptureTargetFace);
-        AddField(layout, 4, "Spacing U (m)", spacingUNumeric);
-        AddField(layout, 5, "Spacing V (m)", spacingVNumeric);
-        AddField(layout, 6, mode == TextureOperationMode.Boss ? "Height (m)" : "Depth (m)", heightNumeric);
+        AddField(layout, 4, "Spacing U (mm)", spacingUNumeric);
+        AddField(layout, 5, "Spacing V (mm)", spacingVNumeric);
+        AddField(layout, 6, isBossMode ? "Height (mm)" : "Depth (mm)", heightNumeric);
         AddField(layout, 7, "Margin (UV units)", marginNumeric);
         AddField(layout, 8, "Rotation (deg)", rotationNumeric);
         AddField(layout, 9, "Max instances", maxInstancesNumeric);

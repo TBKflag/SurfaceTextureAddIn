@@ -38,13 +38,15 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
     private dynamic? maxInstancesBox;
     private dynamic? maxNormalDeltaBox;
     private dynamic? skipCurvatureCheckBox;
+    private TextureParameters? initialParams;
 
-    public TexturePageResult? Show(dynamic solidWorksApplication, TextureOperationMode requestedMode)
+    public TexturePageResult? Show(dynamic solidWorksApplication, TextureOperationMode requestedMode, TextureParameters? initialParameters = null)
     {
         swApp = solidWorksApplication;
         mode = requestedMode;
         result = null;
         closeSignal.Reset();
+        initialParams = initialParameters;
 
         try
         {
@@ -64,7 +66,7 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
             // Fall back to the simple form below.
         }
 
-        using var form = new TextureCommandForm(swApp, mode);
+        using var form = new TextureCommandForm(swApp, mode, initialParameters);
         form.Show();
         while (form.Visible)
         {
@@ -90,8 +92,34 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
         }
 
         int errors = 0;
+        string title;
+        switch (mode)
+        {
+            case TextureOperationMode.Boss:
+                title = "Generate Convex Texture";
+                break;
+            case TextureOperationMode.Cut:
+                title = "Generate Concave Texture";
+                break;
+            case TextureOperationMode.CopySingle:
+                title = "Copy Single Texture";
+                break;
+            case TextureOperationMode.EditBoss:
+                title = "Edit Convex Texture";
+                break;
+            case TextureOperationMode.EditCut:
+                title = "Edit Concave Texture";
+                break;
+            case TextureOperationMode.EditCopySingle:
+                title = "Edit Single Texture";
+                break;
+            default:
+                title = "Texture Operation";
+                break;
+        }
+
         page = swApp.CreatePropertyManagerPage(
-            mode == TextureOperationMode.Boss ? "Generate Convex Texture" : "Generate Concave Texture",
+            title,
             (int)swPropertyManagerPageOptions_e.swPropertyManagerOptions_OkayButton +
             (int)swPropertyManagerPageOptions_e.swPropertyManagerOptions_CancelButton,
             this,
@@ -154,13 +182,24 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
         faceSelectionBox.AllowMultipleSelectOfSameEntity = false;
         faceSelectionBox.SetSelectionFilters(new[] { (int)swSelectType_e.swSelFACES });
 
-        spacingUBox = CreateNumberBox(group, SpacingUId, "Spacing U (m)", 0.01, 0.001, 1.0, 0.001);
-        spacingVBox = CreateNumberBox(group, SpacingVId, "Spacing V (m)", 0.01, 0.001, 1.0, 0.001);
-        heightDepthBox = CreateNumberBox(group, HeightDepthId, mode == TextureOperationMode.Boss ? "Height (m)" : "Depth (m)", 0.001, 0.0001, 0.2, 0.001);
-        marginBox = CreateNumberBox(group, MarginId, "Margin", 0.0, 0.0, 0.2, 0.001);
-        rotationBox = CreateNumberBox(group, RotationId, "Rotation (deg)", 0.0, -360.0, 360.0, 1.0);
-        maxInstancesBox = CreateNumberBox(group, MaxInstancesId, "Max Instances", 500.0, 1.0, 5000.0, 10.0);
-        maxNormalDeltaBox = CreateNumberBox(group, MaxNormalDeltaId, "Max Normal Delta", 25.0, 1.0, 180.0, 1.0);
+        var spacingU = initialParams?.SpacingU ?? 1.0;
+        var spacingV = initialParams?.SpacingV ?? 1.0;
+        var heightDepth = initialParams?.HeightOrDepth ?? 1.0;
+        var margin = initialParams?.Margin ?? 0.0;
+        var rotation = initialParams?.RotationDegrees ?? 0.0;
+        var maxInstances = initialParams?.MaxInstances ?? 500;
+        var maxNormalDelta = initialParams?.MaxNormalDeltaDegrees ?? 25.0;
+        var skipCurvature = initialParams?.SkipHighCurvature ?? true;
+
+        bool isBossMode = mode == TextureOperationMode.Boss || mode == TextureOperationMode.EditBoss;
+
+        spacingUBox = CreateNumberBox(group, SpacingUId, "Spacing U (mm)", spacingU, 0.1, 100.0, 0.1);
+        spacingVBox = CreateNumberBox(group, SpacingVId, "Spacing V (mm)", spacingV, 0.1, 100.0, 0.1);
+        heightDepthBox = CreateNumberBox(group, HeightDepthId, isBossMode ? "Height (mm)" : "Depth (mm)", heightDepth, 0.01, 50.0, 0.1);
+        marginBox = CreateNumberBox(group, MarginId, "Margin (mm)", margin, 0.0, 20.0, 0.1);
+        rotationBox = CreateNumberBox(group, RotationId, "Rotation (deg)", rotation, -360.0, 360.0, 1.0);
+        maxInstancesBox = CreateNumberBox(group, MaxInstancesId, "Max Instances", (double)maxInstances, 1.0, 5000.0, 10.0);
+        maxNormalDeltaBox = CreateNumberBox(group, MaxNormalDeltaId, "Max Normal Delta", maxNormalDelta, 1.0, 180.0, 1.0);
 
         skipCurvatureCheckBox = group.AddControl2(
             SkipCurvatureId,
@@ -170,7 +209,7 @@ internal sealed class TexturePropertyManagerPage : IPropertyManagerPage2Handler9
             (int)swAddControlOptions_e.swControlOptions_Visible |
             (int)swAddControlOptions_e.swControlOptions_Enabled,
             "Skip placements that change surface normal too abruptly.");
-        skipCurvatureCheckBox.Checked = true;
+        skipCurvatureCheckBox.Checked = skipCurvature;
     }
 
     private static dynamic CreateNumberBox(dynamic group, int id, string label, double value, double min, double max, double increment)
